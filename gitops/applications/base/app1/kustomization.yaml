@@ -1,0 +1,3 @@
+resources:
+  - app1-deployment.yaml
+  - app1-service.yaml
