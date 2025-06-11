@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/Lebo2025/kubernetes-poc.git
     targetRevision: main
-    path: applications/overlays/azure-aks
+    path: gitops/applications/overlays/azure-aks
   destination:
     server: https://kubernetes.default.svc
     namespace: default
