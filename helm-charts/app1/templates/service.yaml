@@ -11,5 +11,9 @@ spec:
     targetPort: http
     protocol: TCP
     name: http
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     {{- include "app1.selectorLabels" . | nindent 4 }}
