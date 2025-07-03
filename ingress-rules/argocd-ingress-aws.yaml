@@ -5,12 +5,8 @@ metadata:
   namespace: argocd
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/server-snippet: |
-      grpc_read_timeout 300;
-      grpc_send_timeout 300;
-      client_body_timeout 60;
-      client_header_timeout 60;
-      client_max_body_size 1m;
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
