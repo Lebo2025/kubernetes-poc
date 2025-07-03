@@ -25,7 +25,7 @@ affinity:
           - key: app.kubernetes.io/name
             operator: In
             values:
-            - {{ include "app1.name" . }}
+            - app1
         topologyKey: kubernetes.io/hostname
 
 # Cloud-specific configurations
