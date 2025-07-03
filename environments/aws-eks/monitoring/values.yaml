@@ -1,0 +1,28 @@
+cloud:
+  provider: "aws"
+  region: "eu-west-1"
+
+environment: "aws-eks"
+
+prometheus:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+grafana:
+  service:
+    type: LoadBalancer
+    port: 3000
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi

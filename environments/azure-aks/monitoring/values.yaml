@@ -1,0 +1,28 @@
+cloud:
+  provider: "azure"
+  region: "East US"
+
+environment: "azure-aks"
+
+prometheus:
+  resources:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+grafana:
+  service:
+    type: LoadBalancer
+    port: 3000
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-resource-group: "platform-poc-rg"
+  resources:
+    limits:
+      cpu: 150m
+      memory: 200Mi
+    requests:
+      cpu: 75m
+      memory: 100Mi
