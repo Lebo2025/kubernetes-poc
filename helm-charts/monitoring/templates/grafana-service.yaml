@@ -5,6 +5,10 @@ metadata:
   name: grafana
   labels:
     app: grafana
+  {{- with .Values.grafana.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.grafana.service.type }}
   ports:
@@ -12,10 +16,6 @@ spec:
     targetPort: 3000
     protocol: TCP
     name: http
-  {{- with .Values.grafana.service.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
   selector:
     app: grafana
 {{- end }}
