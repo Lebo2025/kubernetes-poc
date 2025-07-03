@@ -15,7 +15,18 @@ nodeSelector: {}
 
 tolerations: []
 
-affinity: {}
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - {{ include "app1.name" . }}
+        topologyKey: kubernetes.io/hostname
 
 # Cloud-specific configurations
 cloud:

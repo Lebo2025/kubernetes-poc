@@ -6,9 +6,43 @@ cloud:
 
 environment: "azure-aks"
 
-# Azure-specific node selector
+# Azure-specific node selector and affinity
 nodeSelector:
   kubernetes.io/os: linux
+  agentpool: default
+
+# Azure-specific pod affinity
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      preference:
+        matchExpressions:
+        - key: topology.kubernetes.io/zone
+          operator: In
+          values:
+          - eastus-1
+          - eastus-2
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - app1
+        topologyKey: kubernetes.io/hostname
+
+# Azure topology spread constraints (cost-optimized)
+topologySpreadConstraints:
+- maxSkew: 2
+  topologyKey: topology.kubernetes.io/zone
+  whenUnsatisfiable: ScheduleAnyway
+  labelSelector:
+    matchLabels:
+      app.kubernetes.io/name: app1
 
 # Azure-specific resource requests
 resources:

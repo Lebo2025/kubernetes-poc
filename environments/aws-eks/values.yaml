@@ -6,9 +6,40 @@ cloud:
 
 environment: "aws-eks"
 
-# AWS-specific node selector
+# AWS-specific node selector and affinity
 nodeSelector:
   kubernetes.io/os: linux
+  node.kubernetes.io/instance-type: t3.medium
+
+# AWS-specific pod affinity
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: topology.kubernetes.io/zone
+          operator: In
+          values:
+          - eu-west-1a
+          - eu-west-1b
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchExpressions:
+        - key: app.kubernetes.io/name
+          operator: In
+          values:
+          - app1
+      topologyKey: kubernetes.io/hostname
+
+# AWS topology spread constraints
+topologySpreadConstraints:
+- maxSkew: 1
+  topologyKey: topology.kubernetes.io/zone
+  whenUnsatisfiable: DoNotSchedule
+  labelSelector:
+    matchLabels:
+      app.kubernetes.io/name: app1
 
 # AWS-specific resource requests
 resources:

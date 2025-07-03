@@ -7,6 +7,8 @@ This POC demonstrates cloud-agnostic Kubernetes deployments using Helm charts an
 This project showcases how Kubernetes enables true multi-cloud deployments by:
 - Using a single Helm chart that deploys to multiple cloud providers
 - Leveraging cloud-specific configurations through values files
+- Implementing advanced scheduling with pod affinity and topology constraints
+- Optimizing for high availability (AWS) vs cost efficiency (Azure)
 - Implementing GitOps practices with ArgoCD for automated deployments
 - Maintaining consistency while optimizing for each cloud platform
 
@@ -171,24 +173,32 @@ This project showcases how Kubernetes enables true multi-cloud deployments by:
 
 ## Cloud Differences Handled
 
-### AWS EKS Configuration
+### AWS EKS Configuration (High Availability)
 **Application:**
 - **Replicas**: 3 instances for higher availability
 - **Resources**: 500m CPU / 512Mi memory limits
 - **Load Balancer**: Network Load Balancer (NLB) with AWS-specific annotations
 - **Region**: eu-west-1
+- **Node Affinity**: Required scheduling across availability zones (eu-west-1a, eu-west-1b)
+- **Pod Anti-Affinity**: Required - strict pod separation across nodes
+- **Topology Spread**: Strict constraints (maxSkew: 1, DoNotSchedule)
+- **Node Selection**: Specific instance types (t3.medium)
 
 **Monitoring:**
 - **Prometheus**: 500m CPU / 1Gi memory limits
 - **Grafana**: 200m CPU / 256Mi memory limits
 - **Load Balancer**: NLB for Grafana access
 
-### Azure AKS Configuration  
+### Azure AKS Configuration (Cost Optimized)
 **Application:**
 - **Replicas**: 2 instances for cost optimization
 - **Resources**: 400m CPU / 512Mi memory limits
 - **Load Balancer**: Azure Load Balancer with resource group annotations
 - **Region**: eastus
+- **Node Affinity**: Preferred scheduling across zones (flexible)
+- **Pod Anti-Affinity**: Preferred - soft pod separation for cost efficiency
+- **Topology Spread**: Flexible constraints (maxSkew: 2, ScheduleAnyway)
+- **Node Selection**: Default agent pool with OS selection
 
 **Monitoring:**
 - **Prometheus**: 400m CPU / 512Mi memory limits (cost optimized)
@@ -200,6 +210,9 @@ This project showcases how Kubernetes enables true multi-cloud deployments by:
 - **Portability**: Same applications and monitoring run on multiple clouds without code changes
 - **Consistency**: Identical deployment process across all environments
 - **Optimization**: Cloud-specific configurations for performance and cost
+- **Advanced Scheduling**: Pod affinity, anti-affinity, and topology spread constraints per cloud
+- **High Availability**: Intelligent pod distribution across availability zones
+- **Cost Efficiency**: Flexible vs strict scheduling based on cloud strategy
 - **Automation**: GitOps ensures deployments stay synchronized
 - **Observability**: Unified monitoring across all cloud environments
 - **Scalability**: Easy to add new cloud providers or environments
