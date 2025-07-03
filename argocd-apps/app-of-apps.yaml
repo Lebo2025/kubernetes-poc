@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR_USERNAME/kubernetes-poc.git
+    repoURL: https://github.com/Lebo2025/kubernetes-poc
     targetRevision: main
     path: argocd-apps
   destination:

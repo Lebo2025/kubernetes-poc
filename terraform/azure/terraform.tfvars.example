@@ -1,0 +1,2 @@
+aks_cluster_context = "your-aks-cluster-context"
+azure_resource_group = "your-resource-group"

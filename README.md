@@ -22,12 +22,14 @@ This POC demonstrates cloud-agnostic Kubernetes deployments using Helm charts an
 ## Deployment
 
 ### Prerequisites
-1. Install ArgoCD in both AWS EKS and Azure AKS clusters
-2. Update repository URLs in `argocd-apps/*.yaml` files to match your Git repository
+1. AWS EKS and Azure AKS clusters created and configured
+2. kubectl configured with contexts for both clusters
+3. ArgoCD installed on both clusters
+4. Git repository with your manifests pushed
 
 ### Step-by-Step Deployment
 
-1. **Check current cluster context**
+1. **Check current cluster contexts**
    ```bash
    kubectl config current-context
    kubectl config get-contexts
@@ -40,19 +42,40 @@ This POC demonstrates cloud-agnostic Kubernetes deployments using Helm charts an
    git push
    ```
 
-3. **Deploy to AWS EKS cluster**
+3. **Install ArgoCD on both clusters**
    ```bash
+   # Switch to AWS EKS cluster
    kubectl config use-context your-eks-context
-   kubectl apply -f argocd-apps/app-of-apps.yaml
+   kubectl create namespace argocd
+   kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+   
+   # Switch to Azure AKS cluster
+   kubectl config use-context your-aks-context
+   kubectl create namespace argocd
+   kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+   
+   # Wait for ArgoCD to be ready on both clusters
+   kubectl get pods -n argocd -w
    ```
 
-4. **Deploy to Azure AKS cluster**
+4. **Update repository URLs**
    ```bash
+   # Replace YOUR_USERNAME with your GitHub username in all ArgoCD app files
+   sed -i 's/YOUR_USERNAME/your-github-username/g' argocd-apps/*.yaml
+   ```
+
+5. **Deploy applications to ArgoCD**
+   ```bash
+   # Deploy to AWS EKS cluster
+   kubectl config use-context your-eks-context
+   kubectl apply -f argocd-apps/app-of-apps.yaml
+   
+   # Deploy to Azure AKS cluster
    kubectl config use-context your-aks-context
    kubectl apply -f argocd-apps/app-of-apps.yaml
    ```
 
-5. **Verify deployments**
+6. **Verify deployments**
    ```bash
    # Check ArgoCD applications
    kubectl get applications -n argocd
@@ -62,7 +85,7 @@ This POC demonstrates cloud-agnostic Kubernetes deployments using Helm charts an
    kubectl get pods -n app1-azure
    ```
 
-6. **Access ArgoCD UI locally**
+7. **Access ArgoCD UI locally**
    ```bash
    # Port forward ArgoCD server to local machine
    kubectl port-forward svc/argocd-server -n argocd 8080:443
