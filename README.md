@@ -2,6 +2,14 @@
 
 This POC demonstrates cloud-agnostic Kubernetes deployments using Helm charts and ArgoCD, deploying the same application to both AWS EKS and Azure AKS.
 
+## Overview
+
+This project showcases how Kubernetes enables true multi-cloud deployments by:
+- Using a single Helm chart that deploys to multiple cloud providers
+- Leveraging cloud-specific configurations through values files
+- Implementing GitOps practices with ArgoCD for automated deployments
+- Maintaining consistency while optimizing for each cloud platform
+
 ## Architecture
 
 - **Single Helm Chart**: `helm-charts/app1/` contains the base application template
@@ -103,7 +111,31 @@ This POC demonstrates cloud-agnostic Kubernetes deployments using Helm charts an
 
 ## Cloud Differences Handled
 
-- **Resource limits**: Different CPU/memory based on cloud pricing
-- **Load balancer annotations**: Cloud-specific service configurations  
-- **Node selectors**: Platform-specific scheduling
-- **Replica counts**: Environment-appropriate scaling
+### AWS EKS Configuration
+- **Replicas**: 3 instances for higher availability
+- **Resources**: 500m CPU / 512Mi memory limits
+- **Load Balancer**: Network Load Balancer (NLB) with AWS-specific annotations
+- **Region**: eu-west-1
+
+### Azure AKS Configuration  
+- **Replicas**: 2 instances for cost optimization
+- **Resources**: 400m CPU / 512Mi memory limits
+- **Load Balancer**: Azure Load Balancer with resource group annotations
+- **Region**: eastus
+
+## Key Benefits
+
+- **Portability**: Same application runs on multiple clouds without code changes
+- **Consistency**: Identical deployment process across all environments
+- **Optimization**: Cloud-specific configurations for performance and cost
+- **Automation**: GitOps ensures deployments stay synchronized
+- **Scalability**: Easy to add new cloud providers or environments
+
+## Technologies Used
+
+- **Kubernetes**: Container orchestration platform
+- **Helm**: Package manager for Kubernetes applications
+- **ArgoCD**: GitOps continuous delivery tool
+- **Terraform**: Infrastructure as Code for cluster provisioning
+- **AWS EKS**: Managed Kubernetes service on AWS
+- **Azure AKS**: Managed Kubernetes service on Azure
