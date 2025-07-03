@@ -20,15 +20,13 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - name: http
-          containerPort: 3000
+          containerPort: 80
           protocol: TCP
         env:
         - name: CLOUD_PROVIDER
           value: {{ .Values.cloud.provider | quote }}
         - name: CLOUD_REGION
           value: {{ .Values.cloud.region | quote }}
-        command: ["sh", "-c"]
-        args: ["cd /tmp && echo 'const express = require(\"express\"); const os = require(\"os\"); const app = express(); const port = 3000; app.get(\"/\", (req, res) => { res.json({ message: \"Hello from Kubernetes!\", hostname: os.hostname(), platform: process.env.CLOUD_PROVIDER || \"unknown\", region: process.env.CLOUD_REGION || \"unknown\", timestamp: new Date().toISOString() }); }); app.get(\"/health\", (req, res) => { res.json({ status: \"healthy\" }); }); app.listen(port, () => { console.log(\`API running on port \${port}\`); });' > app.js && echo '{\"name\": \"simple-api\", \"version\": \"1.0.0\", \"dependencies\": {\"express\": \"^4.18.2\"}}' > package.json && npm install && node app.js"]
         {{- with .Values.resources }}
         resources:
           {{- toYaml . | nindent 10 }}

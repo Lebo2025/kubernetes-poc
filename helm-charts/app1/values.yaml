@@ -1,13 +1,13 @@
 replicaCount: 2
 
 image:
-  repository: node
-  tag: "18-alpine"
+  repository: nginx
+  tag: "1.25"
   pullPolicy: IfNotPresent
 
 service:
   type: LoadBalancer
-  port: 3000
+  port: 80
 
 resources: {}
 

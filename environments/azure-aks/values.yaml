@@ -22,6 +22,6 @@ resources:
 # Azure Load Balancer service type
 service:
   type: LoadBalancer
-  port: 3000
+  port: 80
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-resource-group: "platform-poc-rg"
