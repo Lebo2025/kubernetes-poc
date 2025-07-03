@@ -28,6 +28,18 @@ affinity:
             - app1
         topologyKey: kubernetes.io/hostname
 
+# Ingress configuration
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: app.lebo.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
 # Cloud-specific configurations
 cloud:
   provider: ""

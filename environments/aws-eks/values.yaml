@@ -54,7 +54,19 @@ resources:
 
 # AWS Load Balancer service type
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 80
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+
+# Enable ingress for AWS
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: app.aws.lebo.com
+      paths:
+        - path: /
+          pathType: Prefix

@@ -217,6 +217,22 @@ This project showcases how Kubernetes enables true multi-cloud deployments by:
 - **Observability**: Unified monitoring across all cloud environments
 - **Scalability**: Easy to add new cloud providers or environments
 
+## Ingress Routes
+
+The following ingress routes are configured:
+
+**AWS:**
+- `app.aws.lebo.com` → App1 Service
+- `grafana.aws.lebo.com` → Grafana Service
+- `prometheus.aws.lebo.com` → Prometheus Service
+- `argocd.aws.lebo.com` → ArgoCD Service
+
+**Azure:**
+- `app.azure.lebo.com` → App1 Service
+- `grafana.azure.lebo.com` → Grafana Service
+- `prometheus.azure.lebo.com` → Prometheus Service
+- `argocd.azure.lebo.com` → ArgoCD Service
+
 ## Future Enhancements
 
 This POC can be extended with:

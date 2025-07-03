@@ -55,7 +55,19 @@ resources:
 
 # Azure Load Balancer service type
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 80
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-resource-group: "platform-poc-rg"
+
+# Enable ingress for Azure
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: app.azure.lebo.com
+      paths:
+        - path: /
+          pathType: Prefix
