@@ -1,0 +1,26 @@
+replicaCount: 2
+
+image:
+  repository: nginx
+  tag: "1.25"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Cloud-specific configurations
+cloud:
+  provider: ""
+  region: ""
+  
+# Environment-specific settings
+environment: "default"

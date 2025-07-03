@@ -1,4 +1,0 @@
-bases:
-  - ../../base/app1
-patchesStrategicMerge:
-  - replica-patch.yaml

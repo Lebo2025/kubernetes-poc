@@ -1,0 +1,27 @@
+replicaCount: 2
+
+cloud:
+  provider: "azure"
+  region: "eastus"
+
+environment: "azure-aks"
+
+# Azure-specific node selector
+nodeSelector:
+  kubernetes.io/os: linux
+
+# Azure-specific resource requests
+resources:
+  limits:
+    cpu: 400m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+# Azure Load Balancer service type
+service:
+  type: LoadBalancer
+  port: 80
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: "myResourceGroup"

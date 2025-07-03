@@ -1,18 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: eks-app
+  name: app1-azure
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/Lebo2025/kubernetes-poc.git
     targetRevision: main
-    path: gitops/applications/overlays/aws-eks
+    path: helm-charts/app1
+    helm:
+      valueFiles:
+        - ../../environments/azure-aks/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: app1-azure
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,27 @@
+replicaCount: 3
+
+cloud:
+  provider: "aws"
+  region: "us-west-2"
+
+environment: "aws-eks"
+
+# AWS-specific node selector
+nodeSelector:
+  kubernetes.io/os: linux
+
+# AWS-specific resource requests
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# AWS Load Balancer service type
+service:
+  type: LoadBalancer
+  port: 80
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
