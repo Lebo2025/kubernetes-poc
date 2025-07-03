@@ -2,7 +2,7 @@ replicaCount: 2
 
 cloud:
   provider: "azure"
-  region: "eastus"
+  region: "East US"
 
 environment: "azure-aks"
 
