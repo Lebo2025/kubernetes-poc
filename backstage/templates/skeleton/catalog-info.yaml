@@ -1,0 +1,18 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}-cluster
+  description: Cloud-agnostic Kubernetes cluster on ${{ values.cloud_provider }}
+  annotations:
+    github.com/project-slug: Lebo2025/${{ values.name }}-cluster
+    backstage.io/kubernetes-id: ${{ values.name }}-cluster
+    argocd/app-name: ${{ values.name }}-apps
+spec:
+  type: infrastructure
+  lifecycle: production
+  owner: platform-team
+  system: kubernetes-platform
+  providesApis:
+    - kubernetes-api
+  dependsOn:
+    - resource:${{ values.cloud_provider }}-account

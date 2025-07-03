@@ -204,6 +204,39 @@ This project showcases how Kubernetes enables true multi-cloud deployments by:
 - **Observability**: Unified monitoring across all cloud environments
 - **Scalability**: Easy to add new cloud providers or environments
 
+## Scaling with Backstage IDP
+
+For organizations needing to create multiple clusters, this POC includes Backstage templates for self-service cluster provisioning:
+
+### Backstage Template Features
+- **Self-Service**: Developers can create clusters via UI forms
+- **Multi-Cloud**: Support for AWS, Azure, and GCP
+- **Standardized**: Consistent configurations across all clusters
+- **GitOps Ready**: Auto-generates ArgoCD applications
+- **Monitoring Included**: Optional Prometheus/Grafana deployment
+
+### Using the Template
+1. **Install Backstage** in your organization
+2. **Register the template**: `backstage/templates/cluster-template.yaml`
+3. **Create clusters** via Backstage UI with custom parameters:
+   - Cloud provider (AWS/Azure/GCP)
+   - Region and instance types
+   - Node count and application replicas
+   - Enable/disable monitoring and ArgoCD
+
+### Template Structure
+```
+backstage/
+├── templates/
+│   ├── cluster-template.yaml    # Backstage template definition
+│   └── skeleton/                # Template files
+│       ├── terraform/           # Infrastructure as Code
+│       ├── environments/        # Cloud-specific values
+│       └── argocd-apps/         # GitOps applications
+└── catalog/
+    └── platform-system.yaml    # Platform catalog entities
+```
+
 ## Technologies Used
 
 - **Kubernetes**: Container orchestration platform
@@ -212,5 +245,6 @@ This project showcases how Kubernetes enables true multi-cloud deployments by:
 - **Terraform**: Infrastructure as Code for cluster provisioning
 - **Prometheus**: Metrics collection and monitoring
 - **Grafana**: Metrics visualization and dashboards
+- **Backstage**: Internal Developer Platform for self-service
 - **AWS EKS**: Managed Kubernetes service on AWS
 - **Azure AKS**: Managed Kubernetes service on Azure

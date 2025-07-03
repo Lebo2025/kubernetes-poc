@@ -1,0 +1,43 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: kubernetes-platform
+  description: Cloud-agnostic Kubernetes platform
+spec:
+  owner: platform-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kubernetes-api
+  description: Kubernetes API for cluster management
+spec:
+  type: rest
+  lifecycle: production
+  owner: platform-team
+  system: kubernetes-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Kubernetes API
+      version: 1.28.0
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: aws-account
+  description: AWS Account for infrastructure
+spec:
+  type: cloud-account
+  owner: platform-team
+  system: kubernetes-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: azure-account
+  description: Azure Account for infrastructure
+spec:
+  type: cloud-account
+  owner: platform-team
+  system: kubernetes-platform

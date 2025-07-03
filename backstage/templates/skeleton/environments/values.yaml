@@ -1,0 +1,27 @@
+replicaCount: ${{ values.app_replicas }}
+
+cloud:
+  provider: "${{ values.cloud_provider }}"
+  region: "${{ values.region }}"
+
+environment: "${{ values.name }}-${{ values.cloud_provider }}"
+
+# Cloud-specific resource requests
+resources:
+  limits:
+    cpu: {% if values.cloud_provider == "aws" %}500m{% else %}400m{% endif %}
+    memory: 512Mi
+  requests:
+    cpu: {% if values.cloud_provider == "aws" %}250m{% else %}200m{% endif %}
+    memory: 256Mi
+
+# Cloud-specific service configuration
+service:
+  type: LoadBalancer
+  port: 80
+  annotations:
+    {% if values.cloud_provider == "aws" %}
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    {% elif values.cloud_provider == "azure" %}
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: "${{ values.name }}-rg"
+    {% endif %}

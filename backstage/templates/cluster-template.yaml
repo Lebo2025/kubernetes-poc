@@ -1,0 +1,107 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: kubernetes-cluster-template
+  title: Cloud-Agnostic Kubernetes Cluster
+  description: Create a new Kubernetes cluster with monitoring and GitOps
+  tags:
+    - kubernetes
+    - cloud-agnostic
+    - terraform
+    - argocd
+spec:
+  owner: platform-team
+  type: infrastructure
+  parameters:
+    - title: Cluster Configuration
+      required:
+        - name
+        - cloud_provider
+        - region
+      properties:
+        name:
+          title: Cluster Name
+          type: string
+          description: Name of the Kubernetes cluster
+          pattern: '^[a-z0-9-]+$'
+        cloud_provider:
+          title: Cloud Provider
+          type: string
+          description: Target cloud provider
+          enum:
+            - aws
+            - azure
+            - gcp
+          enumNames:
+            - 'Amazon Web Services'
+            - 'Microsoft Azure'
+            - 'Google Cloud Platform'
+        region:
+          title: Region
+          type: string
+          description: Cloud region for deployment
+        node_count:
+          title: Node Count
+          type: integer
+          description: Number of worker nodes
+          default: 2
+          minimum: 1
+          maximum: 10
+        instance_type:
+          title: Instance Type
+          type: string
+          description: VM instance type
+          default: t3.medium
+    - title: Application Configuration
+      properties:
+        enable_monitoring:
+          title: Enable Monitoring
+          type: boolean
+          description: Deploy Prometheus and Grafana
+          default: true
+        enable_argocd:
+          title: Enable ArgoCD
+          type: boolean
+          description: Install ArgoCD for GitOps
+          default: true
+        app_replicas:
+          title: Application Replicas
+          type: integer
+          description: Number of application replicas
+          default: 2
+          minimum: 1
+          maximum: 10
+  steps:
+    - id: fetch-base
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          cloud_provider: ${{ parameters.cloud_provider }}
+          region: ${{ parameters.region }}
+          node_count: ${{ parameters.node_count }}
+          instance_type: ${{ parameters.instance_type }}
+          enable_monitoring: ${{ parameters.enable_monitoring }}
+          enable_argocd: ${{ parameters.enable_argocd }}
+          app_replicas: ${{ parameters.app_replicas }}
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        repoUrl: github.com?repo=${{ parameters.name }}-cluster&owner=Lebo2025
+        description: Cloud-agnostic Kubernetes cluster for ${{ parameters.name }}
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
