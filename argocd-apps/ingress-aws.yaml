@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-aws
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Lebo2025/kubernetes-poc.git
+    targetRevision: main
+    path: helm-charts/ingress-nginx
+    helm:
+      valueFiles:
+        - ../../environments/aws-eks/ingress/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ingress-nginx
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
