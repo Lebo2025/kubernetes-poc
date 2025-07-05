@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: argocd.azure.lebo.com
+  - host: argocd.aws.lebo.com
     http:
       paths:
       - path: /
