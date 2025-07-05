@@ -17,6 +17,8 @@ spec:
             enabled: true
           ingressClassResource:
             default: true
+          extraArgs:
+            enable-ssl-passthrough: ""
           service:
             type: LoadBalancer
             annotations:
