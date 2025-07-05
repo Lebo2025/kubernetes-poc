@@ -27,9 +27,11 @@ spec:
         - /nginx-ingress-controller
         - --ingress-class=nginx
         - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
+        {{- if .Values.controller.admissionWebhooks.enabled }}
         - --validating-webhook=:8443
         - --validating-webhook-certificate=/usr/local/certificates/cert
         - --validating-webhook-key=/usr/local/certificates/key
+        {{- end }}
         env:
         - name: POD_NAME
           valueFrom:
@@ -48,9 +50,11 @@ spec:
         - name: https
           containerPort: 443
           protocol: TCP
+        {{- if .Values.controller.admissionWebhooks.enabled }}
         - name: webhook
           containerPort: 8443
           protocol: TCP
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -67,14 +71,18 @@ spec:
           periodSeconds: 10
         resources:
           {{- toYaml .Values.controller.resources | nindent 10 }}
+        {{- if .Values.controller.admissionWebhooks.enabled }}
         volumeMounts:
         - name: webhook-cert
           mountPath: /usr/local/certificates/
           readOnly: true
+        {{- end }}
+      {{- if .Values.controller.admissionWebhooks.enabled }}
       volumes:
       - name: webhook-cert
         secret:
           secretName: ingress-nginx-admission
+      {{- end }}
       {{- with .Values.controller.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

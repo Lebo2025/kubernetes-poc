@@ -30,6 +30,10 @@ controller:
     enabled: true
     default: true
   
+  # Admission webhooks
+  admissionWebhooks:
+    enabled: true
+    
   # Configuration options
   config:
     use-forwarded-headers: "true"
