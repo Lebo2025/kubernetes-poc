@@ -6,12 +6,34 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Lebo2025/kubernetes-poc.git
-    targetRevision: main
-    path: helm-charts/ingress-nginx
+    repoURL: https://kubernetes.github.io/ingress-nginx
+    chart: ingress-nginx
+    targetRevision: 4.8.3
     helm:
-      valueFiles:
-        - ../../environments/azure-aks/ingress/values.yaml
+      values: |
+        controller:
+          replicaCount: 2
+          admissionWebhooks:
+            enabled: true
+          ingressClassResource:
+            default: true
+          service:
+            type: LoadBalancer
+            annotations:
+              service.beta.kubernetes.io/azure-load-balancer-resource-group: "platform-poc-rg"
+          resources:
+            limits:
+              cpu: 150m
+              memory: 200Mi
+            requests:
+              cpu: 75m
+              memory: 100Mi
+          nodeSelector:
+            kubernetes.io/os: linux
+            agentpool: default
+          config:
+            use-proxy-protocol: "false"
+            use-forwarded-headers: "true"
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx
