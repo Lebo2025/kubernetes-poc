@@ -9,7 +9,6 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
-  ingressClassName: nginx
   rules:
   - host: argocd.azure.lebo.com
     http:
