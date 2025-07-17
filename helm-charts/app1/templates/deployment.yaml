@@ -16,7 +16,6 @@ spec:
       labels:
         {{- include "app1.selectorLabels" . | nindent 8 }}
     spec:
-{{- end }}
       securityContext:
         {{- toYaml .Values.securityContext | nindent 8 }}
       containers:
@@ -79,3 +78,4 @@ spec:
       topologySpreadConstraints:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}
