@@ -1,4 +1,4 @@
-{{- if not .Values.blueGreen }}
+{{- if .Values.blueGreen }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "app1.labels" . | nindent 4 }}
+    app.kubernetes.io/color: {{ .Values.blueGreen.active }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -19,4 +20,5 @@ spec:
   {{- end }}
   selector:
     {{- include "app1.selectorLabels" . | nindent 4 }}
+    version: {{ .Values.blueGreen.active }}
 {{- end }}

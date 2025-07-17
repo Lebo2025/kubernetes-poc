@@ -11,6 +11,7 @@ This project showcases how Kubernetes enables true multi-cloud deployments by:
 - Optimizing for high availability (AWS) vs cost efficiency (Azure)
 - Implementing GitOps practices with ArgoCD for automated deployments
 - Maintaining consistency while optimizing for each cloud platform
+- Supporting blue-green deployment strategy for zero-downtime updates
 
 ## Architecture
 
@@ -18,6 +19,7 @@ This project showcases how Kubernetes enables true multi-cloud deployments by:
 - **Environment-Specific Values**: Cloud-specific configurations in `environments/`
 - **ArgoCD Applications**: Separate apps for each cloud using the same chart
 - **GitOps**: ArgoCD manages deployments from this Git repository
+- **Blue-Green Deployments**: Zero-downtime updates with separate blue and green environments
 
 ## Structure
 
@@ -171,6 +173,51 @@ This project showcases how Kubernetes enables true multi-cloud deployments by:
    - Monitor metrics from both AWS and Azure deployments
    - Prometheus data source: `http://prometheus:9090`
 
+## Blue-Green Deployment
+
+The application uses a blue-green deployment strategy for zero-downtime updates:
+
+1. **How it works:**
+   - Two identical environments (blue and green) are maintained
+   - Only one environment receives production traffic at a time
+   - Updates are applied to the inactive environment
+   - Traffic is switched to the updated environment after testing
+
+2. **Implementation:**
+   - Both blue and green deployments run simultaneously
+   - The active version is controlled by the `blueGreen.active` value in values.yaml
+   - A main service routes traffic to the active deployment
+   - A preview service allows testing the inactive deployment before switching
+
+3. **Performing a blue-green deployment:**
+   ```bash
+   # 1. Update the inactive deployment with new version
+   # If blue is active, update green values.yaml:
+   # blueGreen.green.tag: "1.26"
+   
+   # 2. Apply the changes and wait for the new version to be ready
+   kubectl apply -f argocd-apps/app-of-apps.yaml
+   
+   # 3. Test the new version using the preview service
+   # Access http://<PREVIEW-SERVICE-IP>
+   
+   # 4. Switch traffic to the new version by updating values.yaml:
+   # blueGreen.active: "green"
+   
+   # 5. Apply the change to switch traffic
+   kubectl apply -f argocd-apps/app-of-apps.yaml
+   ```
+
+4. **Rollback:**
+   - To rollback, simply switch the active version back:
+   ```bash
+   # Update values.yaml:
+   # blueGreen.active: "blue"
+   
+   # Apply the change
+   kubectl apply -f argocd-apps/app-of-apps.yaml
+   ```
+
 ## Cloud Differences Handled
 
 ### AWS EKS Configuration (High Availability)
@@ -216,6 +263,7 @@ This project showcases how Kubernetes enables true multi-cloud deployments by:
 - **Automation**: GitOps ensures deployments stay synchronized
 - **Observability**: Unified monitoring across all cloud environments
 - **Scalability**: Easy to add new cloud providers or environments
+- **Zero-Downtime Updates**: Blue-green deployment strategy for seamless updates
 
 ## Ingress Routes
 
@@ -223,12 +271,14 @@ The following ingress routes are configured:
 
 **AWS:**
 - `app.aws.lebo.com` → App1 Service
+- `app-preview.aws.lebo.com` → App1 Preview Service
 - `grafana.aws.lebo.com` → Grafana Service
 - `prometheus.aws.lebo.com` → Prometheus Service
 - `argocd.aws.lebo.com` → ArgoCD Service
 
 **Azure:**
 - `app.azure.lebo.com` → App1 Service
+- `app-preview.azure.lebo.com` → App1 Preview Service
 - `grafana.azure.lebo.com` → Grafana Service
 - `prometheus.azure.lebo.com` → Prometheus Service
 - `argocd.azure.lebo.com` → ArgoCD Service
@@ -242,6 +292,7 @@ This POC can be extended with:
 - **Advanced Monitoring**: Custom dashboards and alerts
 - **Security Scanning**: Container and infrastructure security
 - **Cost Optimization**: Resource usage monitoring
+- **Canary Deployments**: Percentage-based traffic splitting
 
 ## Technologies Used
 

@@ -1,17 +1,37 @@
 replicaCount: 2
 
-cloud:
-  provider: "azure"
-  region: "East US"
+# Blue-Green Deployment Configuration
+blueGreen:
+  active: blue
+  blue:
+    replicaCount: 2
+    tag: "1.25"
+  green:
+    replicaCount: 2
+    tag: "1.25"
 
-environment: "azure-aks"
+image:
+  repository: nginx
+  tag: "1.25"
+  pullPolicy: Always
 
-# Azure-specific node selector and affinity
+service:
+  type: LoadBalancer
+  port: 80
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: "my-resource-group"
+
+resources:
+  limits:
+    cpu: 400m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
 nodeSelector:
   kubernetes.io/os: linux
-  agentpool: default
 
-# Azure-specific pod affinity
 affinity:
   nodeAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
@@ -35,39 +55,16 @@ affinity:
             - app1
         topologyKey: kubernetes.io/hostname
 
-# Azure topology spread constraints (cost-optimized)
 topologySpreadConstraints:
-- maxSkew: 2
-  topologyKey: topology.kubernetes.io/zone
-  whenUnsatisfiable: ScheduleAnyway
-  labelSelector:
-    matchLabels:
-      app.kubernetes.io/name: app1
+  - maxSkew: 2
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: app1
 
-# Azure-specific resource requests
-resources:
-  limits:
-    cpu: 400m
-    memory: 512Mi
-  requests:
-    cpu: 200m
-    memory: 256Mi
+cloud:
+  provider: "azure"
+  region: "eastus"
 
-# Azure Load Balancer service type
-service:
-  type: ClusterIP
-  port: 80
-  annotations:
-    service.beta.kubernetes.io/azure-load-balancer-resource-group: "platform-poc-rg"
-
-# Enable ingress for Azure
-ingress:
-  enabled: true
-  className: "nginx"
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-  hosts:
-    - host: app.azure.lebo.com
-      paths:
-        - path: /
-          pathType: Prefix
+environment: "azure-aks"

@@ -1,29 +1,33 @@
-{{- if not .Values.blueGreen }}
+{{- if .Values.blueGreen }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "app1.fullname" . }}
+  name: {{ include "app1.fullname" . }}-green
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "app1.labels" . | nindent 4 }}
+    version: green
+    app.kubernetes.io/color: green
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.blueGreen.green.replicaCount | default .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "app1.selectorLabels" . | nindent 6 }}
+      version: green
   template:
     metadata:
       labels:
         {{- include "app1.selectorLabels" . | nindent 8 }}
+        version: green
+        app.kubernetes.io/color: green
     spec:
-{{- end }}
       securityContext:
         {{- toYaml .Values.securityContext | nindent 8 }}
       containers:
       - name: {{ .Chart.Name }}
         securityContext:
           {{- toYaml .Values.podSecurityContext | nindent 10 }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.blueGreen.green.tag | default .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - name: http
@@ -42,6 +46,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        - name: DEPLOYMENT_COLOR
+          value: "green"
         livenessProbe:
           httpGet:
             path: /
@@ -79,3 +85,4 @@ spec:
       topologySpreadConstraints:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}

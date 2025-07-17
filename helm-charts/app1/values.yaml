@@ -5,6 +5,17 @@ image:
   tag: "1.25"
   pullPolicy: Always
 
+# Blue-Green Deployment Configuration
+blueGreen:
+  # Which version is currently active: blue or green
+  active: blue
+  blue:
+    replicaCount: 2
+    tag: "1.25"
+  green:
+    replicaCount: 2
+    tag: "1.25"
+
 service:
   type: LoadBalancer
   port: 80
